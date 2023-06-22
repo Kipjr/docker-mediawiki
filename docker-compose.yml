@@ -23,25 +23,24 @@ x-template: &default-template
 services:
   mw.php:
     <<: *default-template
-    image: mediawiki:stable
+    image: ghcr.io/vslcatena/docker-mediawiki:REL1_39
+    build: ./src
     hostname: mw.php
     container_name: mw.php
     ports:
       - 7777:80
-    links:
-      - *DB_HOST
     volumes:
       - mw_data:/var/www/html/images
       # After initial setup, download LocalSettings.php to the same directory as
       # this yaml and uncomment the following line and use compose to restart
       # the mediawiki service
-      # - ./LocalSettings.php:/var/www/html/LocalSettings.php
+      - ./LocalSettings.php:/var/www/html/LocalSettings.php
   # This key also defines the name of the database host used during setup instead of the default localhost
 
   mw.db:
     <<: *default-template
     container_name: mw.db
-    hostname: mw.db
+    hostname: db
     image: 'yobasystems/alpine-mariadb:latest'
     environment:
       # @see https://phabricator.wikimedia.org/source/mediawiki/browse/master/includes/DefaultSettings.php
