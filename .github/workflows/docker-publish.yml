@@ -8,7 +8,7 @@ name: Docker
 on:
   workflow_dispatch:
     inputs:
-      version_php:
+      version_mw:
         description: "Mediawiki Version"
         required: true
         default: "REL1_39"
@@ -43,7 +43,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
+        
+      - name: Set environment variables (workflow)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "VERSION_MW=${{ inputs.version_mw }}" >> $GITHUB_ENV
+          
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
       - name: Install cosign
@@ -74,6 +79,9 @@ jobs:
         uses: docker/metadata-action@v4.6.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=tag
+            type=raw,$VERSION_MW
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
