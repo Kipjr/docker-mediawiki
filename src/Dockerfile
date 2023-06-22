@@ -1,6 +1,6 @@
-FROM mediawiki:stable
+ARG VERSION=1.39
+FROM mediawiki:${VERSION}
 
-ARG VERSION=REL1_39
 # Exiftool
 # ffmpeg
 # pdftoppm
