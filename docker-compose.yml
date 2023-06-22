@@ -24,6 +24,8 @@ services:
   mw.php:
     <<: *default-template
     image: mediawiki:stable
+    hostname: mw.php
+    container_name: mw.php
     ports:
       - 7777:80
     links:
