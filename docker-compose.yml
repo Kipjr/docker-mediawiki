@@ -1,0 +1,69 @@
+# MediaWikiwith MariaDB
+# https://github.com/wikimedia/mediawiki-docker/
+#
+# Access via http://localhost:8080
+#   (or http://Please ask your administrator.:8080 if using docker-machine)
+
+x-variables:
+ - &DB_HOST 'mw.db'
+ - &DB_ROOT_PASSWORD ''
+ - &DB_DATABASE 'mw'
+ - &DB_USERNAME 'mw'
+ - &DB_PASSWORD 'mw'
+ - &DB_PREFIX '_mw'
+
+x-template: &default-template
+   environment:
+      TZ: 'Europe/Amsterdam'
+   networks:
+     - net
+   restart: "unless-stopped"
+
+
+services:
+  mw.php:
+    <<: *default-template
+    image: mediawiki:stable
+    ports:
+      - 7777:80
+    links:
+      - *DB_HOST
+    volumes:
+      - mw_data:/var/www/html/images
+      # After initial setup, download LocalSettings.php to the same directory as
+      # this yaml and uncomment the following line and use compose to restart
+      # the mediawiki service
+      # - ./LocalSettings.php:/var/www/html/LocalSettings.php
+  # This key also defines the name of the database host used during setup instead of the default localhost
+
+  mw.db:
+    <<: *default-template
+    container_name: mw.db
+    hostname: mw.db
+    image: 'yobasystems/alpine-mariadb:latest'
+    environment:
+      # @see https://phabricator.wikimedia.org/source/mediawiki/browse/master/includes/DefaultSettings.php
+      MYSQL_DATABASE: *DB_DATABASE
+      MYSQL_USER: *DB_USERNAME
+      MYSQL_PASSWORD: *DB_PASSWORD
+      #MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+      MYSQL_ROOT_PASSWORD: *DB_ROOT_PASSWORD
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  mw_data:
+  db_data:
+
+
+
+#Docker Networks
+networks:
+  net:
+     driver: bridge
+     ipam:
+        driver: default
+        config:
+          - subnet: 192.168.8.224/29 #(8.201-8.206, 207)
+     driver_opts:
+       com.docker.network.bridge.name: mw_net
