@@ -23,7 +23,7 @@ x-template: &default-template
 services:
   mw.php:
     <<: *default-template
-    image: ghcr.io/vslcatena/docker-mediawiki:REL1_39
+    image: ghcr.io/vslcatena/docker-mediawiki:1.39
     build: ./src
     hostname: mw.php
     container_name: mw.php
