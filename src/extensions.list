@@ -4,6 +4,7 @@ CodeMirror
 DynamicPageList
 JsonConfig
 MassEditRegex
+OpenIDConnect
 ParserFunctions
 PdfHandler
 PluggableAuth
