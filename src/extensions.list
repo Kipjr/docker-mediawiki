@@ -1,12 +1,10 @@
-CategoryTree
-CodeEditor
 CodeMirror
-DynamicPageList
+DynamicPageList3
 JsonConfig
+Kartographer
 MassEditRegex
 OpenIDConnect
 ParserFunctions
-PdfHandler
 PluggableAuth
+UserMerge
 VisualEditor
-WikiEditor
