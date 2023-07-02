@@ -2,6 +2,10 @@
 EXT=$1
 VER=${2:-1.39}
 
+####
+#### extension.list
+####
+
 VER_STRING="REL${VER/./_}"
 #curl --no-progress-meter -G --connect-timeout 5  -H "Connection: close"  -o ${EXT}.html https://www.mediawiki.org/wiki/Special:ExtensionDistributor?extdistname=${EXT}&extdistversion=REL${VER}
 
