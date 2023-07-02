@@ -24,7 +24,11 @@ services:
   mw.php:
     <<: *default-template
     image: ghcr.io/vslcatena/docker-mediawiki:1.39
-    build: ./src
+    build:
+        context: ./src
+        args:
+            VERSION: 1.39
+       
     hostname: mw.php
     container_name: mw.php
     ports:
@@ -41,9 +45,8 @@ services:
     <<: *default-template
     container_name: mw.db
     hostname: db
-    image: 'yobasystems/alpine-mariadb:latest'
+    image: 'mariadb:latest'
     environment:
-      # @see https://phabricator.wikimedia.org/source/mediawiki/browse/master/includes/DefaultSettings.php
       MYSQL_DATABASE: *DB_DATABASE
       MYSQL_USER: *DB_USERNAME
       MYSQL_PASSWORD: *DB_PASSWORD
