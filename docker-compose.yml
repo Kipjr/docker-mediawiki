@@ -61,15 +61,15 @@ services:
             args:
                 VERSION: lts
         depends_on:
-            - db
+            - mw.db
         environment:
-            - MW_SITE_SERVER: ${MW_SITE_SERVER}
-            - MW_DB_NAME: ${MYSQL_DATABASE:-wiki}
-            - MW_DB_USER: ${MYSQL_USER:-wikiuser}
-            - MW_DB_PASS: ${MYSQL_PASSWORD:-password}
-            - PHP_LOG_ERRORS: On
-            - PHP_ERROR_REPORTING: E_ALL & ~E_DEPRECATED & ~E_STRICT #Production Value: E_ALL & ~E_DEPRECATED & ~E_STRICT
-            - TZ: Europe/Amsterdam
+           MW_SITE_SERVER: '${MW_SITE_SERVER}'
+           MW_DB_NAME: '${MYSQL_DATABASE:-wiki}'
+           MW_DB_USER: '${MYSQL_USER:-wikiuser}'
+           MW_DB_PASS: '${MYSQL_PASSWORD:-password}'
+           PHP_LOG_ERRORS: On
+           PHP_ERROR_REPORTING: E_ALL & ~E_DEPRECATED & ~E_STRICT #Production Value: E_ALL & ~E_DEPRECATED & ~E_STRICT
+           TZ: Europe/Amsterdam
         volumes:
             - images:/var/www/html/images
             - skins:/var/www/html/skins
