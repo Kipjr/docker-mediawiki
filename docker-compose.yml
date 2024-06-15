@@ -17,7 +17,7 @@ networks:
           - subnet: ${NET_SUBNET:-192.168.8.224/28} #(8.201-8.206, 207)
      driver_opts:
        com.docker.network.bridge.name: mw_net
-       
+
 services:
     mw.db:
         image: 'mariadb:10'
@@ -27,18 +27,16 @@ services:
         networks:
           - net
         environment:
-            # MYSQL_ROOT_PASSWORD:
-            MYSQL_ALLOW_EMPTY_ROOT_PASSWORD: 'no'
-            MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
-            # MYSQL_DATABASE: 
-            # MYSQL_USER: 
-            # MYSQL_PASSWORD:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_ALLOW_EMPTY_ROOT_PASSWORD: no
+            MYSQL_RANDOM_ROOT_PASSWORD: ${MYSQL_RANDOM_ROOT_PASSWORD:-yes}
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
             TZ: 'Europe/Amsterdam'
         volumes:
           - db:/var/lib/mysql
-#        ports:
-#          - 127.0.0.1:8101:3306
-        
+
     mw.php:
         hostname: mw.php
         container_name: mw.php
@@ -46,10 +44,10 @@ services:
         networks:
           - net
         ports:
-          - 127.0.0.1:8100:80
+          - ${MW_HOSTPORT:-127.0.0.1:8100}:80
         image: ghcr.io/vslcatena/docker-mediawiki:lts # mediawiki:lts
         build:
-            dockerfile: Dockerfile        
+            dockerfile: Dockerfile
             context: ./src
             args:
                 VERSION: lts
@@ -60,8 +58,8 @@ services:
            MW_DB_NAME: '${MYSQL_DATABASE:-wiki}'
            MW_DB_USER: '${MYSQL_USER:-wikiuser}'
            MW_DB_PASS: '${MYSQL_PASSWORD:-password}'
-           PHP_LOG_ERRORS: On
-           PHP_ERROR_REPORTING: E_ALL & ~E_DEPRECATED & ~E_STRICT #Production Value: E_ALL & ~E_DEPRECATED & ~E_STRICT
+           PHP_LOG_ERRORS: Off
+           PHP_ERROR_REPORTING: E_ALL & ~E_DEPRECATED & ~E_STRICT
            TZ: Europe/Amsterdam
         volumes:
             - images:/var/www/html/images
