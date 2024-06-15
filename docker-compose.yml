@@ -1,20 +1,13 @@
 volumes:
     images:
         driver: local
-        driver_opts:
-            o: "size=256m"
     skins:
         driver: local
-        driver_opts:
-            o: "size=256m"
     extensions:
         driver: local
-        driver_opts:
-            o: "size=256m"                        
     db:
         driver: local
-        driver_opts:
-            o: "size=512m"
+
 networks:
   net:
      driver: bridge
