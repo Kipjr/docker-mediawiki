@@ -9,6 +9,8 @@ volumes:
         driver: local
     db:
         driver: local
+    initdb:
+        driver: local
 
 networks:
   net:
@@ -38,6 +40,7 @@ services:
             TZ: 'Europe/Amsterdam'
         volumes:
           - db:/var/lib/mysql
+          - initdb:/docker-entrypoint-initdb.d
 
     mw.php:
         hostname: mw.php
