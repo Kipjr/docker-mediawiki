@@ -1,73 +1,81 @@
-# MediaWikiwith MariaDB
-# https://github.com/wikimedia/mediawiki-docker/
-#
-# Access via http://localhost:8080
-#   (or http://Please ask your administrator.:8080 if using docker-machine)
-
-x-variables:
- - &DB_HOST 'mw.db'
- - &DB_ROOT_PASSWORD ''
- - &DB_DATABASE 'mw'
- - &DB_USERNAME 'mw'
- - &DB_PASSWORD 'mw'
- - &DB_PREFIX '_mw'
-
-x-template: &default-template
-   environment:
-      TZ: 'Europe/Amsterdam'
-   networks:
-     - net
-   restart: "unless-stopped"
-
-
-services:
-  mw.php:
-    <<: *default-template
-    image: ghcr.io/vslcatena/docker-mediawiki:1.39
-    build:
-        context: ./src
-        args:
-            VERSION: 1.39
-       
-    hostname: mw.php
-    container_name: mw.php
-    ports:
-      - 7777:80
-    volumes:
-      - mw_data:/var/www/html/images
-      # After initial setup, download LocalSettings.php to the same directory as
-      # this yaml and uncomment the following line and use compose to restart
-      # the mediawiki service
-      - ./LocalSettings.php:/var/www/html/LocalSettings.php
-  # This key also defines the name of the database host used during setup instead of the default localhost
-
-  mw.db:
-    <<: *default-template
-    container_name: mw.db
-    hostname: db
-    image: 'mariadb:latest'
-    environment:
-      MYSQL_DATABASE: *DB_DATABASE
-      MYSQL_USER: *DB_USERNAME
-      MYSQL_PASSWORD: *DB_PASSWORD
-      #MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
-      MYSQL_ROOT_PASSWORD: *DB_ROOT_PASSWORD
-    volumes:
-      - db_data:/var/lib/mysql
-
 volumes:
-  mw_data:
-  db_data:
-
-
-
-#Docker Networks
+    images:
+        driver: local
+        driver_opts:
+            o: "size=256m"
+    skins:
+        driver: local
+        driver_opts:
+            o: "size=256m"
+    extensions:
+        driver: local
+        driver_opts:
+            o: "size=256m"                        
+    db:
+        driver: local
+        driver_opts:
+            o: "size=512m"
 networks:
   net:
      driver: bridge
      ipam:
         driver: default
         config:
-          - subnet: 192.168.8.224/29 #(8.201-8.206, 207)
+          - subnet: ${NET_SUBNET:-192.168.8.224/28} #(8.201-8.206, 207)
      driver_opts:
        com.docker.network.bridge.name: mw_net
+       
+services:
+    mw.db:
+        image: 'mariadb:10'
+        container_name: mw.db
+        hostname: db
+        restart: always
+        networks:
+          - net
+        environment:
+            # MYSQL_ROOT_PASSWORD:
+            MYSQL_ALLOW_EMPTY_ROOT_PASSWORD: 'no'
+            MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+            # MYSQL_DATABASE: 
+            # MYSQL_USER: 
+            # MYSQL_PASSWORD:
+            TZ: 'Europe/Amsterdam'
+        volumes:
+          - db:/var/lib/mysql
+#        ports:
+#          - 127.0.0.1:8101:3306
+        
+    mw.php:
+        hostname: mw.php
+        container_name: mw.php
+        restart: always
+        networks:
+          - net
+        ports:
+          - 127.0.0.1:8100:80
+        image: ghcr.io/vslcatena/docker-mediawiki:lts # mediawiki:lts
+        build:
+            dockerfile: Dockerfile        
+            context: ./src
+            args:
+                VERSION: lts
+        depends_on:
+            - db
+        environment:
+            - MW_SITE_SERVER: ${MW_SITE_SERVER}
+            - MW_DB_NAME: ${MYSQL_DATABASE:-wiki}
+            - MW_DB_USER: ${MYSQL_USER:-wikiuser}
+            - MW_DB_PASS: ${MYSQL_PASSWORD:-password}
+            - PHP_LOG_ERRORS: On
+            - PHP_ERROR_REPORTING: E_ALL & ~E_DEPRECATED & ~E_STRICT #Production Value: E_ALL & ~E_DEPRECATED & ~E_STRICT
+            - TZ: Europe/Amsterdam
+        volumes:
+            - images:/var/www/html/images
+            - skins:/var/www/html/skins
+            - extensions:/var/www/html/extensions
+            # After initial setup, download LocalSettings.php to the same directory as
+            # this yaml and uncomment the following line and use compose to restart
+            # the mediawiki service
+            - ./LocalSettings.php:/var/www/html/LocalSettings.php
+            # This key also defines the name of the database host used during setup instead of the default localhost
