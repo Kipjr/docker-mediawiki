@@ -1,4 +1,6 @@
 volumes:
+    LocalSettings:
+        driver: local
     images:
         driver: local
     skins:
@@ -62,11 +64,7 @@ services:
            PHP_ERROR_REPORTING: E_ALL & ~E_DEPRECATED & ~E_STRICT
            TZ: Europe/Amsterdam
         volumes:
+            - LocalSettings:/var/www/html/conf.d
             - images:/var/www/html/images
             - skins:/var/www/html/skins
             - extensions:/var/www/html/extensions
-            # After initial setup, download LocalSettings.php to the same directory as
-            # this yaml and uncomment the following line and use compose to restart
-            # the mediawiki service
-            - ./LocalSettings.php:/var/www/html/LocalSettings.php
-            # This key also defines the name of the database host used during setup instead of the default localhost
