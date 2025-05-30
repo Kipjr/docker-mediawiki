@@ -1,4 +1,4 @@
-ARG VERSION
+ARG VERSION=lts
 FROM mediawiki:${VERSION}
 ENV MW_CONFIG_FILE=/var/www/html/conf.d/LocalSettings.php
 COPY php.ini /usr/local/etc/php/conf.d/mediawiki.ini
