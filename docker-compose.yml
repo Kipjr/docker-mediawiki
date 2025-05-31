@@ -64,9 +64,9 @@ services:
            MW_DB_NAME: '${MYSQL_DATABASE:-wiki}'
            MW_DB_USER: '${MYSQL_USER:-wikiuser}'
            MW_DB_PASS: '${MYSQL_PASSWORD:-password}'
-           PHP_LOG_ERRORS: Off
-           PHP_ERROR_REPORTING: E_ALL & ~E_DEPRECATED & ~E_STRICT
-           TZ: Europe/Amsterdam
+           PHP_LOG_ERRORS: '${PHP_LOG_ERRORS:-Off}'
+           PHP_ERROR_REPORTING: '${PHP_ERROR_REPORTING:-E_ALL & ~E_DEPRECATED & ~E_STRICT}'
+           TZ: '${TZ:-Europe/Amsterdam}'
         volumes:
             - LocalSettings:/var/www/html/conf.d
             - images:/var/www/html/images
