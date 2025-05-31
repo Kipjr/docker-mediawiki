@@ -60,7 +60,7 @@ services:
             dockerfile: Dockerfile
             context: ./src
             args:
-                VERSION: lts
+                VERSION: ${MW_VERSION:-lts}
                 UID: 1000
                 GID: 1000
         depends_on:
