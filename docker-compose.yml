@@ -57,6 +57,8 @@ services:
             context: ./src
             args:
                 VERSION: lts
+                UID: 1000
+                GID: 1000
         depends_on:
             - mw.db
         environment:
