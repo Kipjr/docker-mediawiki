@@ -10,6 +10,6 @@ RUN --mount=type=bind,target=/tmp \
     ln -s /etc/apache2/sites-available/000-mediawiki.conf /etc/apache2/sites-enabled/000-mediawiki.conf; \
     mkdir /var/www/html/conf.d; \
     chown -R ${UID}:${GID} /var/www/html/*; \
-    chown -R www-data:www-data extensions skins cache images \
+    chown -R www-data:www-data extensions skins cache images; \
     chmod -R go-w /var/www/html/*
 VOLUME ["/var/www/html/conf.d","/var/www/html/images", "/var/www/html/skins", "/var/www/html/extensions"]
