@@ -46,6 +46,10 @@ services:
         hostname: mw.php
         container_name: mw.php
         restart: always
+        labels:
+          - "traefik.enable=true"
+          - "traefik.http.routers.mw.rule=Host(`${TRAEFIK_FQDN}`)"
+          - "traefik.http.routers.mw.entrypoints=${TRAEFIK_ENTRYPOINT}"
         networks:
           - net
         ports:
